@@ -1,19 +1,122 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Name</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8f7f3;
+            min-height: 100vh;
+        }
 
-<html>
-    <body bgcolor="787878">
-        <h1 style="color:whitesmoke;font-family: Arial, Helvetica, sans-serif;">
-            Calvin Walker
-        </h1>
-        <p style="color:whitesmoke;font-family: Arial, Helvetica, sans-serif;"> 
-            About me: I am a student in my second year at the University of Chicago, 
-            studying economics and computer science. I also work as a Research
-            Assistant for Professor John List at the Becker Friedman Institute 
-            for Economics.
-        </p>
-        <p style="color:whitesmoke;font-family: Arial, Helvetica, sans-serif;"> 
-            You can reach me at cswalker1@uchicago.edu, or calvinswalker@gmail.com
-        </p>
+        main {
+            margin-top: 15vh;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease forwards;
+        }
 
-    </body bgcolor="787878">
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .name-animation {
+            display: inline-block;
+        }
+
+        .name-animation span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: letterFadeIn 0.3s ease forwards;
+        }
+
+        @keyframes letterFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: #333;
+            bottom: -4px;
+            left: 0;
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: lineExpand 0.8s ease-out 1s forwards;
+        }
+
+        /* @keyframes lineExpand {
+            to {
+                transform: scaleX(1);
+            }
+        } */
+
+        p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #555;
+        }
+
+        .links {
+            margin-top: 3rem;
+            opacity: 0;
+            animation: fadeIn 0.8s ease 1s forwards;
+        }
+
+        a {
+            color: #333;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            margin-right: 1.5rem;
+            padding-bottom: 2px;
+            transition: border-color 0.3s ease;
+        }
+
+        a:hover {
+            border-bottom: 1px solid #333;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Calvin Walker</h1>
+        <p>
+            I'm a fourth year student at The University of Chicago, studying computer science and economics. 
+        </p>
+        <p>
+            You can reach me at [domain]@gmail.com or cs[lastname]1@uchicago.edu
+        </p>
+    </main>
+</body>
 </html>
+
