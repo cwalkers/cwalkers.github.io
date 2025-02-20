@@ -4,119 +4,287 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Walker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
     <style>
+        /* Light theme variables */
+        :root {
+            --bg-color: #fae8cc;
+            --text-color: #222;
+            --bounce-light: #eebc6b;
+            --grid-color: rgba(0, 0, 0, 0.02);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --link-border: rgba(0, 0, 0, 0.2);
+            --link-hover: rgba(0, 0, 0, 0.05);
+            --timing-fn: cubic-bezier(.455, .19, 0, .985);
+        }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --bg-color: #0f1420;
+            --text-color: #e4e4e4;
+            --bounce-light: #384359;
+            --grid-color: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --link-border: rgba(255, 255, 255, 0.2);
+            --link-hover: rgba(255, 255, 255, 0.05);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Courier New', monospace;
             line-height: 1.6;
-            color: #333;
-            max-width: 650px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: #f8f7f3;
+            margin: 0;
+            padding: 0;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #dappled-light {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        #light-overlay {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle at center,
+                var(--bounce-light) 0%,
+                transparent 70%
+            );
+            opacity: 0.5;
+            animation: lightShift 10s var(--timing-fn) infinite;
+            transition: 0.3s ease;
+        }
+
+        [data-theme="dark"] #light-overlay {
+            opacity: 0.15;
+        }
+
+        @keyframes lightShift {
+            0% { transform: translate(-25%, -25%) rotate(0deg); }
+            50% { transform: translate(-15%, -15%) rotate(5deg); }
+            100% { transform: translate(-25%, -25%) rotate(0deg); }
         }
 
         main {
-            margin-top: 15vh;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeIn 1s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
         }
 
         h1 {
-            font-size: 2rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            position: relative;
-            display: inline-block;
+            font-size: 2.0rem;
+            font-weight: normal;
+            margin-bottom: 2.3rem;
+            letter-spacing: -0.6px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .name-animation {
-            display: inline-block;
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border-color);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: all 0.3s ease;
+            color: var(--text-color);
         }
 
-        .name-animation span {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: letterFadeIn 0.3s ease forwards;
+        .theme-toggle:hover {
+            background: var(--link-hover);
         }
 
-        @keyframes letterFadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h1::after {
-            content: '';
+        .theme-toggle svg {
+            width: 14px;
+            height: 14px;
             position: absolute;
-            width: 100%;
-            height: 1px;
-            background: #333;
-            bottom: -4px;
-            left: 0;
-            transform: scaleX(0);
-            transform-origin: left;
-            animation: lineExpand 0.8s ease-out 1s forwards;
+            transition: opacity 0.3s ease, transform 0.5s ease;
         }
 
-        /* @keyframes lineExpand {
-            to {
-                transform: scaleX(1);
-            }
-        } */
+        .theme-toggle .sun-icon {
+            opacity: 1;
+        }
+
+        .theme-toggle .moon-icon {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-toggle .sun-icon {
+            opacity: 0;
+        }
+
+        [data-theme="dark"] .theme-toggle .moon-icon {
+            opacity: 1;
+        }
 
         p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             margin-bottom: 1.5rem;
-            color: #555;
-        }
-
-        .links {
-            margin-top: 3rem;
-            opacity: 0;
-            animation: fadeIn 0.8s ease 1s forwards;
+            max-width: 32em;
         }
 
         a {
-            color: #333;
+            color: inherit;
             text-decoration: none;
-            border-bottom: 1px solid transparent;
-            margin-right: 1.5rem;
-            padding-bottom: 2px;
-            transition: border-color 0.3s ease;
+            border-bottom: 1px solid var(--link-border);
+            padding-bottom: 1px;
+            transition: all 0.2s ease;
         }
 
         a:hover {
-            border-bottom: 1px solid #333;
+            border-bottom-color: var(--text-color);
+            background: var(--link-hover);
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+            transition: background-image 0.3s ease;
+        }
+
+        .corner {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s ease;
+        }
+
+        .corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .corner-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        #stars {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        [data-theme="dark"] #stars {
+            display: block;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: starTwinkle 3s infinite;
+        }
+
+        @keyframes starTwinkle {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
+    <div class="grid"></div>
+    <div id="stars"></div>
+    <div id="dappled-light">
+        <div id="light-overlay"></div>
+    </div>
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
     <main>
-        <h1>Calvin Walker</h1>
+        <h1>
+            Calvin Walker
+            <button class="theme-toggle" aria-label="Toggle theme">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </h1>
         <p>
-            I'm a fourth year student at The University of Chicago, studying computer science and economics. 
+            I'm a fourth year student at The University of Chicago, studying computer science and economics.
         </p>
         <p>
             You can reach me at [domain]@gmail.com or cs[lastname]1@uchicago.edu
         </p>
     </main>
+    <script>
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 100;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        createStars();
+
+        // Theme toggle
+        const html = document.documentElement;
+        const themeToggle = document.querySelector('.theme-toggle');
+
+        // Set initial theme
+        html.setAttribute('data-theme', 'light');
+
+        // Toggle theme
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            console.log('Theme switched to:', newTheme);
+        });
+    </script>
 </body>
 </html>
-
