@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Title - Calvin Walker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../shared.css">
+    <style>
+        /* Light theme variables */
+        :root {
+            --bg-color: #fae8cc;
+            --text-color: #222;
+            --bounce-light: #f6cc89;
+            --grid-color: rgba(0, 0, 0, 0.02);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --link-border: rgba(0, 0, 0, 0.2);
+            --link-hover: rgba(0, 0, 0, 0.05);
+            --timing-fn: cubic-bezier(.455, .19, 0, .985);
+        }
+
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --bg-color: #0f1420;
+            --text-color: #e4e4e4;
+            --bounce-light: #384359;
+            --grid-color: rgba(255, 255, 255, 0.03);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --link-border: rgba(255, 255, 255, 0.2);
+            --link-hover: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        main {
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease forwards;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        main::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background-color: var(--bg-color);
+            opacity: 0.85;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: -1;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: normal;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+
+        a {
+            color: var(--text-color);
+            text-decoration: none;
+            border-bottom: 1px solid var(--link-border);
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            background: var(--link-hover);
+        }
+
+        /* Article specific styles */
+        .article-content {
+            margin-top: 3rem;
+        }
+
+        .article-content h2 {
+            font-size: 1.5rem;
+            font-weight: normal;
+            margin: 2rem 0 1rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.2rem;
+            font-weight: normal;
+            margin: 1.5rem 0 1rem;
+        }
+
+        blockquote {
+            border-left: 2px solid var(--border-color);
+            margin: 1.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            background: var(--link-hover);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--link-hover);
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: -1;
+            transition: background-image 0.3s ease;
+        }
+
+        .corner {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s ease;
+        }
+
+        .corner-tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+        .corner-tr { top: 20px; right: 20px; border-left: none; border-bottom: none; }
+        .corner-bl { bottom: 20px; left: 20px; border-right: none; border-top: none; }
+        .corner-br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+        /* Ensure article content stays above blur */
+        article {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div id="stars"></div>
+    <div id="dappled-light">
+        <div id="light-overlay"></div>
+    </div>
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <main>
+        <h1>
+            Your Article Title
+            <button class="theme-toggle" aria-label="Toggle theme">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/>
+                    <line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+            </button>
+        </h1>
+
+        <article>
+            <div class="article-content">
+                <p>
+                    Your article content goes here. You can use regular HTML elements like:
+                </p>
+
+                <h2>Section Heading</h2>
+                <p>Section content...</p>
+
+                <h3>Subsection</h3>
+                <p>More content...</p>
+
+                <blockquote>
+                    For quotes or highlighted text
+                </blockquote>
+
+                <p>For code snippets:</p>
+                <pre><code>function example() {
+    return "Hello, world!";
+}</code></pre>
+            </div>
+        </article>
+    </main>
+
+    <script src="../shared.js"></script>
+    <script src="../graph.js"></script>
+</body>
+</html>

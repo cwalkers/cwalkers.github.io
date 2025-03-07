@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calvin Walker - Images</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        /* Full screen layout overrides */
+        body {
+            overflow-x: hidden;
+        }
+
+        main {
+            max-width: 1400px; /* Limit the maximum width */
+            width: 85vw; /* Take up 90% of the viewport width */
+            margin: 0 auto; /* Center the content */
+            padding: 0.5rem;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto 1rem auto;
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .photo-grid-container {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: rgba(var(--bg-color-rgb), 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            will-change: contents;
+            --bg-color-rgb: 250, 232, 204;
+        }
+
+        [data-theme="dark"] .photo-grid-container {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --bg-color-rgb: 15, 20, 32;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 4px;
+        }
+
+        .photo-item {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            aspect-ratio: 1 / 1;
+            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            cursor: pointer;
+            transform-origin: center;
+            /* Add backdrop filter support */
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* Modify the hover effect to be more stable */
+        .photo-item:hover {
+            transform: scale(2.2);
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            /* border-radius: 4px; */
+            /* Add will-change to improve performance */
+            will-change: transform, z-index;
+        }
+        
+        /* Modify the blur effect to be less resource-intensive */
+        .photo-grid:has(.photo-item:hover) .photo-item:not(:hover) {
+            filter: blur(2px);
+            opacity: 0.8;
+            /* Add transition to make the blur smoother */
+            transition: filter 0.2s ease, opacity 0.2s ease;
+        }
+
+        [data-theme="dark"] .photo-item:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            /* Prevent lazy loading */
+            loading: eager;
+            /* Prevent FOUC (Flash of Unstyled Content) */
+            visibility: visible !important;
+            /* Force hardware acceleration */
+            transform: translateZ(0);
+            /* Prevent image disappearing */
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 8px;
+            background: rgba(250, 232, 204, 0.9);
+            color: var(--text-color);
+            transform: translateY(100%);
+            transition: transform 0.3s var(--timing-fn);
+            font-size: 0.8rem;
+            line-height: 1.2;
+            /* Don't show caption on hover anymore */
+            display: none;
+        }
+
+        [data-theme="dark"] .photo-caption {
+            background: rgba(15, 20, 32, 0.9);
+        }
+
+        /* For video or other media types */
+        .photo-item.video::before {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: white;
+            z-index: 1;
+            opacity: 0.8;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 0;
+            font-style: italic;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        /* Modal for full-size view */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-caption {
+            margin-top: 1rem;
+            color: white;
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 4px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 5px;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 6px;
+            }
+        }
+
+        /* Graph nav positioning for full-width layout */
+        .graph-nav {
+            max-width: 600px;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            margin-top: 2rem;
+        }
+        
+        /* Adjust background elements to work with full-width layout */
+        .grid, #stars, #dappled-light, #light-overlay {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+        }
+        
+        .corner {
+            position: fixed;
+        }
+
+        h1 {
+        position: relative;
+        max-width: 100%; /* Change from 600px to 100% */
+        margin: 0 0 1rem 0; /* Remove auto margins */
+        text-align: left; /* Change from center to left */
+        padding: 0.5rem;
+        display: flex; /* Add flex display */
+        justify-content: flex-start; /* Left justify content */
+        }
+
+        /* Add specific styling for the theme toggle button */
+        .theme-toggle {
+            margin-left: 0; /* Ensure no left margin */
+            position: relative; /* Keep it in the document flow */
+            left: 0; /* Align to the left */
+        }
+    </style>
+</head>
+<body>
+    <div class="grid"></div>
+    <div id="stars"></div>
+    <div id="dappled-light">
+        <div id="light-overlay"></div>
+    </div>
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <main>
+        <p>
+            
+        </p>
+        <h1>
+        <button class="theme-toggle" aria-label="Toggle theme">
+            <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+            <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+        </button>
+        </h1>
+        
+        <!-- Add a container div to make the grid square -->
+        <div class="photo-grid-container">
+            <div class="photo-grid">
+
+                <div class="photo-item" data-full="images/IMG_001.JPG">
+                    <img src="images/IMG_001.JPG" alt="NLD">
+                    <div class="photo-caption">January 2025 - NLD</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_1266.jpeg">
+                    <img src="images/IMG_1266.jpeg" alt="London">
+                    <div class="photo-caption">January 2025 - Darts</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_0961.jpeg">
+                    <img src="images/IMG_0961.jpeg" alt="Boulder">
+                    <div class="photo-caption">October 2024 - Boulder</div>
+                </div>
+                                
+                <div class="photo-item" data-full="images/IMG_0875.jpeg">
+                    <img src="images/IMG_0875.jpeg" alt="Bedroom View">
+                    <div class="photo-caption">September 2024 - Bedroom View</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_6659.JPG">
+                    <img src="images/IMG_6659.JPG" alt="Hurgada Desert Camels">
+                    <div class="photo-caption">September 2024 - Hurghada Desert Camels</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_7821.JPG">
+                    <img src="images/IMG_7821.JPG" alt="Hurghada Desert From Above">
+                    <div class="photo-caption">September 2024 - Hurghada Desert From Above</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_6682.JPG">
+                    <img src="images/IMG_6682.JPG" alt="Photo">
+                    <div class="photo-caption">September 2024 - Hurghada Desert</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_0464.jpeg">
+                    <img src="images/IMG_0464.jpeg" alt="Photo">
+                    <div class="photo-caption">July 2024 - Office View</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_0468.jpeg">
+                    <img src="images/IMG_0468.jpeg" alt="Photo">
+                    <div class="photo-caption">July 2024 - Walk to Tennis, Seattle</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_0431.jpeg">
+                    <img src="images/IMG_0431.jpeg" alt="Photo">
+                    <div class="photo-caption">June 2024 - Remembering SF</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_0424.jpeg">
+                    <img src="images/IMG_0424.jpeg" alt="Photo">
+                    <div class="photo-caption">June 2024 - Tennis</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_0360.jpeg">
+                    <img src="images/IMG_0360.jpeg" alt="Photo">
+                    <div class="photo-caption"> 2024 - Best of Hyde Park</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_0126.jpg">
+                    <img src="images/IMG_0126.jpg" alt="Photo">
+                    <div class="photo-caption">March 2024 - Normandy Memorial</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_0146.jpeg">
+                    <img src="images/IMG_0146.jpeg" alt="Photo">
+                    <div class="photo-caption">March 2024 - Caen</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_2396.jpeg">
+                    <img src="images/IMG_2396.jpeg" alt="Photo">
+                    <div class="photo-caption">December 2023 - Rhinebeck</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_9868.jpeg">
+                    <img src="images/IMG_9868.jpeg" alt="Photo">
+                    <div class="photo-caption">December 2023 - Rhinebeck</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_9791.jpeg">
+                    <img src="images/IMG_9791.jpeg" alt="Photo">
+                    <div class="photo-caption">November 2023 - Amagansett</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_9680.jpeg">
+                    <img src="images/IMG_9680.jpeg" alt="Photo">
+                    <div class="photo-caption">October 2023 - Hyde Park Halloween</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_9575.jpeg">
+                    <img src="images/IMG_9575.jpeg" alt="Photo">
+                    <div class="photo-caption">September 2023 - The Point</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_1290.jpeg">
+                    <img src="images/IMG_1290.jpeg" alt="Photo">
+                    <div class="photo-caption">May 2023 - Bellport</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_1125.jpeg">
+                    <img src="images/IMG_1125.jpeg" alt="Photo">
+                    <div class="photo-caption">May 2023 - Mohonk</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_8239.jpg">
+                    <img src="images/IMG_8239.jpg" alt="Photo">
+                    <div class="photo-caption">March 2023 - View, Joshua Tree</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_8252.jpg">
+                    <img src="images/IMG_8252.jpg" alt="Photo">
+                    <div class="photo-caption">March 2023 - Post-climb, Joshua Tree</div>
+                </div>
+                
+                <div class="photo-item" data-full="images/IMG_8256.jpg">
+                    <img src="images/IMG_8256.jpg" alt="Photo">
+                    <div class="photo-caption">March 2023 - Rocks, Joshua Tree</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for full-size view -->
+    <div class="modal" id="photoModal">
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <img src="" alt="Full size photo">
+            <div class="modal-caption"></div>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script src="graph.js"></script>
+    <script>
+        // Photo modal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('photoModal');
+            const modalImg = modal.querySelector('img');
+            const modalCaption = modal.querySelector('.modal-caption');
+            const closeBtn = modal.querySelector('.modal-close');
+            
+            // More aggressive image preloading
+            function preloadImages() {
+                // Create a hidden div to hold all images
+                const preloadContainer = document.createElement('div');
+                preloadContainer.style.position = 'absolute';
+                preloadContainer.style.width = '0';
+                preloadContainer.style.height = '0';
+                preloadContainer.style.overflow = 'hidden';
+                preloadContainer.style.visibility = 'hidden';
+                document.body.appendChild(preloadContainer);
+                
+                // Get all image sources
+                const photoItems = document.querySelectorAll('.photo-item');
+                
+                // Force load all images by creating actual img elements
+                photoItems.forEach(item => {
+                    const thumbnailSrc = item.querySelector('img').getAttribute('src');
+                    const fullSrc = item.getAttribute('data-full');
+                    
+                    // Preload thumbnail
+                    const thumbImg = document.createElement('img');
+                    thumbImg.src = thumbnailSrc;
+                    preloadContainer.appendChild(thumbImg);
+                    
+                    // Preload full size image
+                    const fullImg = document.createElement('img');
+                    fullImg.src = fullSrc;
+                    preloadContainer.appendChild(fullImg);
+                    
+                    // Set complete flag on the original image
+                    const originalImg = item.querySelector('img');
+                    originalImg.dataset.loaded = 'true';
+                });
+                
+                // Log completion
+                console.log('All images preloaded');
+            }
+            
+            // Run preload immediately
+            preloadImages();
+            
+            // Simplified transform origin calculation - less computation
+            function updateTransformOrigins() {
+                const items = document.querySelectorAll('.photo-item');
+                const container = document.querySelector('.photo-grid-container');
+                const containerRect = container.getBoundingClientRect();
+                
+                items.forEach(item => {
+                    const rect = item.getBoundingClientRect();
+                    
+                    // Calculate relative position within container
+                    const relX = (rect.left + rect.width/2) - containerRect.left;
+                    const relY = (rect.top + rect.height/2) - containerRect.top;
+                    
+                    // Calculate as percentage of container dimensions
+                    const percentX = (relX / containerRect.width) * 100;
+                    const percentY = (relY / containerRect.height) * 100;
+                    
+                    // Apply transform origin with percentage values
+                    item.style.transformOrigin = `${percentX}% ${percentY}%`;
+                });
+            }
+            
+            // Optimize scroll and resize handlers
+            let ticking = false;
+            
+            function requestUpdate() {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        updateTransformOrigins();
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }
+            
+            // Use more efficient event listeners
+            window.addEventListener('resize', requestUpdate, { passive: true });
+            window.addEventListener('scroll', requestUpdate, { passive: true });
+            
+            // Initial setup
+            updateTransformOrigins();
+            
+            // Open modal when clicking on a photo
+            document.querySelectorAll('.photo-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const fullSizeUrl = this.getAttribute('data-full');
+                    const caption = this.querySelector('.photo-caption').textContent;
+                    
+                    modalImg.src = fullSizeUrl;
+                    modalCaption.textContent = caption;
+                    modal.style.display = 'flex';
+                    
+                    // Prevent scrolling on the body
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            // Close modal when clicking the close button
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            });
+            
+            // Close modal when clicking outside the image
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'flex') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = '';
+                }
+            });
+            
+            // Simplified hover handling
+            const photoGrid = document.querySelector('.photo-grid');
+            
+            photoGrid.addEventListener('mouseleave', function() {
+                document.querySelectorAll('.photo-item').forEach(item => {
+                    item.style.filter = '';
+                    item.style.opacity = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
