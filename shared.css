@@ -319,12 +319,14 @@ h1 {
 }
 
 .graph-edge.active {
-    background: var(--bounce-light);
+    background: var(--bounce-light) !important;
+    height: 2px !important;
 }
 
 /* Dark mode specific styling for graph edges */
 [data-theme="dark"] .graph-edge.active {
-    background: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.6) !important;
+    height: 2px !important;
 }
 
 /* Page transition animations */
