@@ -9,6 +9,8 @@ class GraphNav {
         this.edges = [
             { from: 'home', to: 'writing' },
             { from: 'home', to: 'photos' },
+            { from: 'photos', to: 'home' },
+            { from: 'writing', to: 'home' },
         ];
 
         this.init();
