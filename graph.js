@@ -110,11 +110,19 @@ class GraphNav {
     }
     
     getCurrentPageId(path) {
-        if (path.endsWith('/') || path.endsWith('index.html')) {
+        // Handle GitHub Pages paths which might include the repository name
+        // or have different formats in production vs local
+        const normalizedPath = path.toLowerCase();
+        
+        if (normalizedPath === '/' || 
+            normalizedPath.endsWith('/index.html') || 
+            normalizedPath.endsWith('/') ||
+            normalizedPath === '/cwalkers.github.io/' ||
+            normalizedPath === '/cwalkers.github.io/index.html') {
             return 'home';
-        } else if (path.endsWith('writing.html')) {
+        } else if (normalizedPath.includes('writing.html')) {
             return 'writing';
-        } else if (path.endsWith('photos.html')) {
+        } else if (normalizedPath.includes('photos.html')) {
             return 'photos';
         }
         return null;
