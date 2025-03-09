@@ -1,4 +1,4 @@
-// GraphNav version 1.1 - Added support for calvinswalker.com and debugging
+// GraphNav version 1.2 - Added support for paths without .html extension
 class GraphNav {
     constructor() {
         this.nodes = [
@@ -135,12 +135,12 @@ class GraphNav {
             normalizedPath === '/cwalkers.github.io/index.html') {
             return 'home';
         } 
-        // Writing page detection
-        else if (normalizedPath.includes('writing.html')) {
+        // Writing page detection - handle both with and without .html extension
+        else if (normalizedPath.includes('writing.html') || normalizedPath === '/writing') {
             return 'writing';
         } 
-        // Photos page detection
-        else if (normalizedPath.includes('photos.html')) {
+        // Photos page detection - handle both with and without .html extension
+        else if (normalizedPath.includes('photos.html') || normalizedPath === '/photos') {
             return 'photos';
         }
         
@@ -153,11 +153,11 @@ class GraphNav {
             console.log('Path segments:', segments);
             console.log('Last segment:', lastSegment);
             
-            if (lastSegment === '' || lastSegment === 'index.html') {
+            if (lastSegment === '' || lastSegment === 'index.html' || lastSegment === 'index') {
                 return 'home';
-            } else if (lastSegment === 'writing.html') {
+            } else if (lastSegment === 'writing.html' || lastSegment === 'writing') {
                 return 'writing';
-            } else if (lastSegment === 'photos.html') {
+            } else if (lastSegment === 'photos.html' || lastSegment === 'photos') {
                 return 'photos';
             }
         }
