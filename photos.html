@@ -60,33 +60,23 @@
             overflow: hidden;
             border: 1px solid var(--border-color);
             aspect-ratio: 1 / 1;
-            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transition: transform 0.28s ease-out, opacity 0.22s ease-out;
             cursor: pointer;
             transform-origin: center;
-            /* Add backdrop filter support */
-            backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            will-change: transform;
         }
 
-        /* Modify the hover effect to be more stable */
         .photo-item:hover {
             transform: scale(2.2);
             z-index: 10;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-            /* border-radius: 4px; */
-            /* Add will-change to improve performance */
-            will-change: transform, z-index;
         }
-        
-        /* Modify the blur effect to be less resource-intensive */
+
         .photo-grid:has(.photo-item:hover) .photo-item:not(:hover) {
-            filter: blur(2px);
-            opacity: 0.8;
-            /* Add transition to make the blur smoother */
-            transition: filter 0.2s ease, opacity 0.2s ease;
+            opacity: 0.7;
         }
 
         [data-theme="dark"] .photo-item:hover {
@@ -97,9 +87,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
-            /* Prevent lazy loading */
-            /* loading: eager; */
             /* Prevent FOUC (Flash of Unstyled Content) */
             visibility: visible !important;
             /* Force hardware acceleration */
@@ -442,46 +429,6 @@
             const modalCaption = modal.querySelector('.modal-caption');
             const closeBtn = modal.querySelector('.modal-close');
             
-            // More aggressive image preloading
-            function preloadImages() {
-                // Create a hidden div to hold all images
-                const preloadContainer = document.createElement('div');
-                preloadContainer.style.position = 'absolute';
-                preloadContainer.style.width = '0';
-                preloadContainer.style.height = '0';
-                preloadContainer.style.overflow = 'hidden';
-                preloadContainer.style.visibility = 'hidden';
-                document.body.appendChild(preloadContainer);
-                
-                // Get all image sources
-                const photoItems = document.querySelectorAll('.photo-item');
-                
-                // Force load all images by creating actual img elements
-                photoItems.forEach(item => {
-                    const thumbnailSrc = item.querySelector('img').getAttribute('src');
-                    const fullSrc = item.getAttribute('data-full');
-                    
-                    // Preload thumbnail
-                    const thumbImg = document.createElement('img');
-                    thumbImg.src = thumbnailSrc;
-                    preloadContainer.appendChild(thumbImg);
-                    
-                    // Preload full size image
-                    const fullImg = document.createElement('img');
-                    fullImg.src = fullSrc;
-                    preloadContainer.appendChild(fullImg);
-                    
-                    // Set complete flag on the original image
-                    const originalImg = item.querySelector('img');
-                    originalImg.dataset.loaded = 'true';
-                });
-                
-                // Log completion
-                console.log('All images preloaded');
-            }
-            
-            // Run preload immediately
-            preloadImages();
             
             // Simplified transform origin calculation - less computation
             function updateTransformOrigins() {
