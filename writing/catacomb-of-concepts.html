@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Article Title - Calvin Walker</title>
+    <title>A Catacomb of Concepts - Calvin Walker</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../shared.css?v=2.2">
     <style>
@@ -45,7 +45,10 @@
         }
 
         main {
-            max-width: 650px;
+            width: 100%;
+            box-sizing: border-box;
+            max-width: clamp(650px, 55vw, 900px);
+            font-size: clamp(0.95rem, 0.8rem + 0.4vw, 1.15rem);
             margin: 0 auto;
             padding: 2rem;
             opacity: 0;
@@ -78,6 +81,7 @@
         }
 
         h1 {
+            position: relative; /* anchors the theme toggle icons */
             font-size: 2rem;
             font-weight: normal;
             margin-bottom: 2rem;
@@ -105,43 +109,9 @@
             margin-top: 3rem;
         }
 
-        .article-content h2 {
-            font-size: 1.5rem;
-            font-weight: normal;
-            margin: 2rem 0 1rem;
-        }
-
-        .article-content h3 {
-            font-size: 1.2rem;
-            font-weight: normal;
-            margin: 1.5rem 0 1rem;
-        }
-
-        blockquote {
-            border-left: 2px solid var(--border-color);
-            margin: 1.5rem 0;
-            padding-left: 1.5rem;
-        }
-
-        code {
-            font-family: 'Courier New', monospace;
-            background: var(--link-hover);
-            padding: 0.2em 0.4em;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: var(--link-hover);
-            padding: 1rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            border: 1px solid var(--border-color);
-        }
-
-        pre code {
-            background: none;
-            padding: 0;
+        .byline {
+            margin: 0;
+            opacity: 0.7;
         }
 
         .grid {
@@ -192,7 +162,7 @@
 
     <main>
         <h1>
-            Your Article Title
+            A Catacomb of Concepts
             <button class="theme-toggle" aria-label="Toggle theme">
                 <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"/>
@@ -212,25 +182,21 @@
         </h1>
 
         <article>
+            <p class="byline">Calvin Walker</p>
+            <p class="byline">1/26/25</p>
+
             <div class="article-content">
                 <p>
-                    Your article content goes here. You can use regular HTML elements like:
+                    Large language models are representation learners. That is, they learn representations of input text in high dimensional latent space, and representations of those representations, and so on—that given sufficient scale, enable them to understand and generate human language, along with a host of emergent capabilities. As Nietzsche might describe this process, given his essay <a href="https://en.wikipedia.org/wiki/On_Truth_and_Lies_in_a_Nonmoral_Sense" target="_blank" rel="noopener">On Truth and Lying in a Non-Moral Sense</a>, large language models operate on the space of human concepts, which “come into being by making equivalent that which is non-equivalent,” (145), thus transforming the object, or ‘thing-in-itself,’ from the stimulation of a nerve, to an image, to a word. A transformation via metaphor that Nietzsche argues, conceals the original entity. As a deaf human might “gaze in astonishment at Chaladnian sound-figures in sand… and swear that he must know what men call sound,” we too believe “we have knowledge of the things themselves, and yet we possess only metaphors of things.” (144) Learning directly from the edifice of concepts, large language models are entirely removed from the original nerve stimulus in a way even humans are not. For while a human may eventually have some sensuous perception not subject to the rule of abstractions, large language models are necessarily separated from such an experience. They exist only in a world of concepts, and recurrent representations of them, doubly blind to the original entities. In fact, language models learn many more concepts than they have dimensions—suggesting that even the concepts themselves are not wholly orthogonal and differentiated in the model’s representation space—but embedded slightly off-kilter.
                 </p>
 
-                <h2>Section Heading</h2>
-                <p>Section content...</p>
+                <p>
+                    But for all of their faults and common critiques, large language models have begun to excel at a variety of what would classically be considered uniquely human reasoning tasks, and with reinforcement learning emerging as a promising new training paradigm, their progress shows no signs of slowing down in the near future. Soon, these models may be superhuman in many domains, contributing to, and accelerating the pursuit of scientific knowledge. Yet as Nietzsche describes the astrologer who “studies the stars in the service of human beings,” and forgets “that the original metaphors of perception were indeed metaphors,” (148), the language model is confined to interpolating within the space of human concepts it has learned. In doing so, the model both demonstrates the “insubstantial and transitory” (141) human intellect—as it surpasses us at our own game of truth—and the irrelevant, arbitrary, even pitiful nature of our edifice of concepts. For if human language and science create a Roman columbarium of concepts—the future language model’s construction is an infinite catacomb.
+                </p>
 
-                <h3>Subsection</h3>
-                <p>More content...</p>
-
-                <blockquote>
-                    For quotes or highlighted text
-                </blockquote>
-
-                <p>For code snippets:</p>
-                <pre><code>function example() {
-    return "Hello, world!";
-}</code></pre>
+                <p>
+                    In a Socratic justification of existence, the advent of a machine intelligence so adept in manipulating human concepts, so unyielding in its never ending pursuit of scientific knowledge, may very well be a marvel of human achievement—but also an existential crisis. To what, then, can we attach our fleeting lives? Nietzsche’s answer is intuition. Guided by immediate, sensuous experiences the “man of intuition, standing in the midst of a culture, reaps directly from his intuitions not just protection from harm but also a constant stream of brightness…of course when he suffers, he suffers more severely.” (153) Embracing one’s own sensuous experience, instead of latching onto the edifice of concepts, is uniquely human, vulnerable, and real—thus creating our own metaphors of nerve stimuli into images. An experience a language model may never access in the same way, forever limited to its world of concepts and representations, the greatest achievement of our edifice exposing the frailty of its construction.
+                </p>
             </div>
         </article>
     </main>

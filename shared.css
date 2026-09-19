@@ -258,6 +258,16 @@ h1 {
     position: relative;
     width: 100%;
     height: 100%;
+    /* Fade the edges of the frame instead of clipping them sharply (the camera moves nodes
+       past them). Two gradients, one per axis, intersected. */
+    -webkit-mask-image:
+        linear-gradient(to right, transparent, #000 14%, #000 86%, transparent),
+        linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+        linear-gradient(to right, transparent, #000 14%, #000 86%, transparent),
+        linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+    mask-composite: intersect;
 }
 
 .graph-node {
@@ -267,7 +277,79 @@ h1 {
     background: var(--text-color);
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    /* Not "all": left/top are updated every frame by the drift animation */
+    transition: transform 0.3s ease, background 0.3s ease, opacity 0.4s ease;
+}
+
+/* Invisible larger hit area so the small dots are easy to tap */
+.graph-node::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+}
+
+/* Article nodes: hidden until revealed (hover on Writing, or on Writing/article pages) */
+.graph-node.child:not(.revealed) {
+    opacity: 0; /* :not() so the .dim fade below can't make a hidden node visible */
+    pointer-events: none;
+}
+
+.graph-node.child.revealed {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.graph-node.child.revealed.dim {
+    opacity: 0.2;
+}
+
+/* Images page: photo nodes are small thumbnail circles that appear when a place is focused */
+.graph-node.photo {
+    width: 20px;
+    height: 20px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid var(--border-color);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.graph-node.photo.revealed {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.graph-node.photo::before {
+    display: none;
+}
+
+.graph-node.photo::after {
+    inset: -6px;
+}
+
+/* Place nodes are tucked away until the graph is opened (pages other than Images) */
+.graph-node.place.collapsed {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.graph-edge.place.collapsed {
+    opacity: 0;
+}
+
+/* The focused place always shows its label (touch has no hover) */
+.graph-node.focused::before {
+    opacity: 1;
+}
+
+/* Everything outside the focused place fades back */
+.graph-node.dim {
+    opacity: 0.2;
+}
+
+/* Faded nodes are still the way back, so they light up when hovered */
+.graph-node.dim:hover {
+    opacity: 0.75;
 }
 
 .graph-node::before {
@@ -315,7 +397,31 @@ h1 {
     background: var(--border-color);
     transform-origin: left center;
     pointer-events: none;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, opacity 0.4s ease;
+}
+
+.graph-edge.child:not(.revealed) {
+    opacity: 0;
+}
+
+.graph-edge.child.revealed {
+    opacity: 1;
+}
+
+.graph-edge.child.revealed.dim {
+    opacity: 0.12;
+}
+
+.graph-edge.photo {
+    opacity: 0;
+}
+
+.graph-edge.photo.revealed {
+    opacity: 1;
+}
+
+.graph-edge.dim {
+    opacity: 0.12;
 }
 
 .graph-edge.active {

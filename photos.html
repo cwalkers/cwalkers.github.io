@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Walker - Images</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="shared.css?v=2.2">
     <style>
         /* Full screen layout overrides */
         body {
@@ -60,40 +60,13 @@
             overflow: hidden;
             border: 1px solid var(--border-color);
             aspect-ratio: 1 / 1;
-            transition: transform 0.28s ease-out, opacity 0.22s ease-out;
             cursor: pointer;
-            transform-origin: center;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            will-change: transform;
-        }
-
-        .photo-item:hover {
-            transform: scale(2.2);
-            z-index: 10;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-        }
-
-        .photo-grid:has(.photo-item:hover) .photo-item:not(:hover) {
-            opacity: 0.7;
-        }
-
-        [data-theme="dark"] .photo-item:hover {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
         }
 
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            /* Prevent FOUC (Flash of Unstyled Content) */
-            visibility: visible !important;
-            /* Force hardware acceleration */
-            transform: translateZ(0);
-            /* Prevent image disappearing */
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
         }
 
         .photo-caption {
@@ -287,123 +260,143 @@
         <div class="photo-grid-container">
             <div class="photo-grid">
 
+                <div class="photo-item" data-full="images/IMG_3748.jpg">
+                    <img src="images/thumbs/IMG_3748.jpg" alt="Brooklyn" loading="lazy" decoding="async">
+                    <div class="photo-caption">July 2026 - Brooklyn</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_0704.jpg">
+                    <img src="images/thumbs/IMG_0704.jpg" alt="London" loading="lazy" decoding="async">
+                    <div class="photo-caption">January 2026 - London</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_4700.jpg">
+                    <img src="images/thumbs/IMG_4700.jpg" alt="Paris" loading="lazy" decoding="async">
+                    <div class="photo-caption">January 2026 - Paris</div>
+                </div>
+
+                <div class="photo-item" data-full="images/IMG_1025.jpg">
+                    <img src="images/thumbs/IMG_1025.jpg" alt="Brooklyn" loading="lazy" decoding="async">
+                    <div class="photo-caption">November 2025 - Brooklyn</div>
+                </div>
+
                 <div class="photo-item" data-full="images/IMG_001.JPG">
-                    <img src="images/IMG_001.JPG" alt="NLD" loading="eager">
+                    <img src="images/thumbs/IMG_001.jpg" alt="NLD" loading="lazy" decoding="async">
                     <div class="photo-caption">January 2025 - NLD</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_1266.jpeg">
-                    <img src="images/IMG_1266.jpeg" alt="London" loading="eager">
+                    <img src="images/thumbs/IMG_1266.jpg" alt="London" loading="lazy" decoding="async">
                     <div class="photo-caption">January 2025 - Darts</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_0961.jpeg">   
-                    <img src="images/IMG_0961.jpeg" alt="Boulder" loading="eager">
+                    <img src="images/thumbs/IMG_0961.jpg" alt="Boulder" loading="lazy" decoding="async">
                     <div class="photo-caption">October 2024 - Boulder</div>
                 </div>
                                 
                 <div class="photo-item" data-full="images/IMG_0875.jpeg">
-                    <img src="images/IMG_0875.jpeg" alt="Bedroom View" loading="eager">
+                    <img src="images/thumbs/IMG_0875.jpg" alt="Bedroom View" loading="lazy" decoding="async">
                     <div class="photo-caption">September 2024 - Bedroom View</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_6659.JPG">
-                    <img src="images/IMG_6659.JPG" alt="Hurgada Desert Camels" loading="eager">
+                    <img src="images/thumbs/IMG_6659.jpg" alt="Hurgada Desert Camels" loading="lazy" decoding="async">
                     <div class="photo-caption">September 2024 - Hurghada Desert Camels</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_7821.JPG">
-                    <img src="images/IMG_7821.JPG" alt="Hurghada Desert From Above" loading="eager">
+                    <img src="images/thumbs/IMG_7821.jpg" alt="Hurghada Desert From Above" loading="lazy" decoding="async">
                     <div class="photo-caption">September 2024 - Hurghada Desert From Above</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_6682.JPG">
-                    <img src="images/IMG_6682.JPG" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_6682.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">September 2024 - Hurghada Desert</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_0464.jpeg">
-                    <img src="images/IMG_0464.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_0464.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">July 2024 - Office View</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_0468.jpeg">
-                    <img src="images/IMG_0468.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_0468.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">July 2024 - Walk to Tennis, Seattle</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_0431.jpeg">
-                    <img src="images/IMG_0431.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_0431.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">June 2024 - Remembering SF</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_0424.jpeg">
-                    <img src="images/IMG_0424.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_0424.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">June 2024 - Tennis</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_0360.jpeg">
-                    <img src="images/IMG_0360.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_0360.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption"> 2024 - Best of Hyde Park</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_0126.jpg">
-                    <img src="images/IMG_0126.jpg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_0126.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">March 2024 - Normandy Memorial</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_0146.jpeg">
-                    <img src="images/IMG_0146.jpeg" alt="Photo" loading="eager">    
+                    <img src="images/thumbs/IMG_0146.jpg" alt="Photo" loading="lazy" decoding="async">    
                     <div class="photo-caption">March 2024 - Caen</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_2396.jpeg">
-                    <img src="images/IMG_2396.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_2396.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">December 2023 - Rhinebeck</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_9868.jpeg">
-                    <img src="images/IMG_9868.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_9868.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">December 2023 - Rhinebeck</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_9791.jpeg">
-                    <img src="images/IMG_9791.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_9791.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">November 2023 - Amagansett</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_9680.jpeg">
-                    <img src="images/IMG_9680.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_9680.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">October 2023 - Hyde Park Halloween</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_9575.jpeg">
-                    <img src="images/IMG_9575.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_9575.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">September 2023 - The Point</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_1290.jpeg">
-                    <img src="images/IMG_1290.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_1290.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">May 2023 - Bellport</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_1125.jpeg">
-                    <img src="images/IMG_1125.jpeg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_1125.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">May 2023 - Mohonk</div>
                 </div>
 
                 <div class="photo-item" data-full="images/IMG_8239.jpg">
-                    <img src="images/IMG_8239.jpg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_8239.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">March 2023 - View, Joshua Tree</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_8252.jpg">
-                    <img src="images/IMG_8252.jpg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_8252.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">March 2023 - Post-climb, Joshua Tree</div>
                 </div>
                 
                 <div class="photo-item" data-full="images/IMG_8256.jpg">
-                    <img src="images/IMG_8256.jpg" alt="Photo" loading="eager">
+                    <img src="images/thumbs/IMG_8256.jpg" alt="Photo" loading="lazy" decoding="async">
                     <div class="photo-caption">March 2023 - Rocks, Joshua Tree</div>
                 </div>
             </div>
@@ -420,7 +413,7 @@
     </div>
 
     <script src="shared.js"></script>
-    <script src="graph.js?v=1.2"></script>
+    <script src="graph.js?v=2.2"></script>
     <script>
         // Photo modal functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -428,50 +421,7 @@
             const modalImg = modal.querySelector('img');
             const modalCaption = modal.querySelector('.modal-caption');
             const closeBtn = modal.querySelector('.modal-close');
-            
-            
-            // Simplified transform origin calculation - less computation
-            function updateTransformOrigins() {
-                const items = document.querySelectorAll('.photo-item');
-                const container = document.querySelector('.photo-grid-container');
-                const containerRect = container.getBoundingClientRect();
-                
-                items.forEach(item => {
-                    const rect = item.getBoundingClientRect();
-                    
-                    // Calculate relative position within container
-                    const relX = (rect.left + rect.width/2) - containerRect.left;
-                    const relY = (rect.top + rect.height/2) - containerRect.top;
-                    
-                    // Calculate as percentage of container dimensions
-                    const percentX = (relX / containerRect.width) * 100;
-                    const percentY = (relY / containerRect.height) * 100;
-                    
-                    // Apply transform origin with percentage values
-                    item.style.transformOrigin = `${percentX}% ${percentY}%`;
-                });
-            }
-            
-            // Optimize scroll and resize handlers
-            let ticking = false;
-            
-            function requestUpdate() {
-                if (!ticking) {
-                    requestAnimationFrame(() => {
-                        updateTransformOrigins();
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            }
-            
-            // Use more efficient event listeners
-            window.addEventListener('resize', requestUpdate, { passive: true });
-            window.addEventListener('scroll', requestUpdate, { passive: true });
-            
-            // Initial setup
-            updateTransformOrigins();
-            
+
             // Open modal when clicking on a photo
             document.querySelectorAll('.photo-item').forEach(item => {
                 item.addEventListener('click', function() {
@@ -507,16 +457,6 @@
                     modal.style.display = 'none';
                     document.body.style.overflow = '';
                 }
-            });
-            
-            // Simplified hover handling
-            const photoGrid = document.querySelector('.photo-grid');
-            
-            photoGrid.addEventListener('mouseleave', function() {
-                document.querySelectorAll('.photo-item').forEach(item => {
-                    item.style.filter = '';
-                    item.style.opacity = '';
-                });
             });
         });
     </script>

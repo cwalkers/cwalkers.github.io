@@ -5,10 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Walker - Writing</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="shared.css">
+    <link rel="stylesheet" href="shared.css?v=2.2">
     <style>
         h1 {
             position: relative; /* Add this to make absolute positioning work */
+        }
+
+        .writing-item {
+            margin-left: -0.5rem; /* cancel the padding so text lines up with the h1 */
+            margin-right: -0.5rem;
+        }
+
+        .writing-item:hover {
+            transform: none;
+        }
+
+        .writing-title {
+            font-size: 1.45rem;
+        }
+
+        .writing-date {
+            margin: 0.25rem 0 0;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -42,9 +60,16 @@
                 </svg>
             </button>
         </h1>
+
+        <div class="writing-list">
+            <a class="writing-item" href="writing/catacomb-of-concepts.html">
+                <h2 class="writing-title">A Catacomb of Concepts</h2>
+                <p class="writing-date">1/26/25</p>
+            </a>
+        </div>
     </main>
 
     <script src="shared.js"></script>
-    <script src="graph.js?v=1.2"></script>
+    <script src="graph.js?v=2.2"></script>
 </body>
 </html>
