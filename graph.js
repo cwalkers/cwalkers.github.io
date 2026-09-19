@@ -1,4 +1,4 @@
-// GraphNav version 2.7 - Year nodes highlight the way back to Images instead of themselves
+// GraphNav version 2.8 - Article nodes open on hovering Writing (pinned on Writing and article pages)
 //
 // Photos are grouped into year nodes, listed by file name (without extension), newest year first.
 // (The code calls these groups "places"; they can be anything.) Add new photos to their year here.
@@ -128,6 +128,7 @@ class GraphNav {
         this.isPhotos = false;
         this.placeNodes = [];
         this.expanded = false;  // year nodes visible and frame grown (opens on hovering Images)
+        this.articlesPinned = false; // article nodes always visible (Writing page and articles)
         this.hoverId = null;    // place focused by mouse hover, or by the first tap on touch
         this.filterId = null;   // place focused by click/tap on the Images page; also filters the grid
         this.hideTimer = null;
@@ -157,6 +158,10 @@ class GraphNav {
         if (!main) return;
 
         const currentPageId = this.getCurrentPageId(window.location.pathname);
+
+        // Article nodes are always shown on the Writing page and on the articles themselves;
+        // everywhere else they open when the Writing node is hovered
+        this.articlesPinned = currentPageId === 'writing' || this.articles.some(a => a.id === currentPageId);
 
         // The year nodes start tucked away on every page (including Images) and open when the
         // Images node is hovered
@@ -232,7 +237,7 @@ class GraphNav {
         // Append the graph at the end of the main content
         main.appendChild(graphNav);
 
-        this.showArticles();
+        this.setArticlesOpen(this.articlesPinned);
         this.setupPlaceInteractions(container);
         this.setupMotion();
         if (this.isPhotos) this.applyUrlState();
@@ -386,11 +391,18 @@ class GraphNav {
         }
     }
 
-    // Article nodes are shown on every page. When another node takes focus they fade back
-    // (like everything else outside its cluster) instead of disappearing.
-    showArticles() {
-        this.nodes.filter(n => n.child).forEach(n => this.nodeEls.get(n.id).classList.add('revealed'));
-        this.edgeEls.filter(e => e.edge.child).forEach(e => e.el.classList.add('revealed'));
+    // Article nodes work like the year nodes: they open when the Writing node is hovered and stay
+    // until the cursor leaves the graph, fading back (not vanishing) when another node takes
+    // focus. On the Writing page and on the articles themselves they're always shown (pinned).
+    setArticlesOpen(on) {
+        if (!on && this.articlesPinned) return;
+
+        this.nodes.filter(n => n.child).forEach(n => {
+            this.nodeEls.get(n.id).classList.toggle('revealed', on);
+        });
+        this.edgeEls.filter(e => e.edge.child).forEach(e => {
+            e.el.classList.toggle('revealed', on);
+        });
     }
 
     // Mouse: hovering any node centers the camera on it and frames its neighbors, so you can walk
@@ -418,6 +430,9 @@ class GraphNav {
                 // Hovering the Images node opens the year nodes
                 if (node.id === 'photos') this.setExpanded(true);
 
+                // Hovering the Writing node opens the article nodes
+                if (node.id === 'writing') this.setArticlesOpen(true);
+
                 if (node.id === this.hoverId) return;
 
                 clearTimeout(this.switchTimer);
@@ -439,6 +454,7 @@ class GraphNav {
             if (e.pointerType !== 'mouse') return;
             this.hideTimer = setTimeout(() => {
                 this.hoverId = null;
+                this.setArticlesOpen(false);
                 // Keep the years open while one is selected (its photos are filtering the grid)
                 if (this.filterId) {
                     this.updateFocus();
@@ -481,6 +497,7 @@ class GraphNav {
     // Zoom out, clear any selected year and close the year nodes again
     reset() {
         this.clearFocus();
+        this.setArticlesOpen(false);
         this.setExpanded(false);
     }
 
