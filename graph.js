@@ -1,4 +1,4 @@
-// GraphNav version 2.9 - Two-tap navigation on touch for Writing as well as Images
+// GraphNav version 3.0 - On touch, the first tap focuses any node (highlight + camera); the second navigates
 //
 // Photos are grouped into year nodes, listed by file name (without extension), newest year first.
 // (The code calls these groups "places"; they can be anything.) Add new photos to their year here.
@@ -360,13 +360,13 @@ class GraphNav {
             } else {
                 window.location.href = this.photosUrl({ place: node.placeNode.place.id, photo: node.base });
             }
-        } else if (node.id === 'writing' && touch && !this.articlesOpen) {
-            // First tap opens the article nodes; a second tap goes to the Writing page
-            this.setArticlesOpen(true);
-        } else if (node.id === 'photos' && touch && !this.expanded) {
-            // First tap opens the year nodes; a second tap goes to the Images page (or, if
-            // already there, resets the view)
-            this.setExpanded(true);
+        } else if (touch && this.hoverId !== node.id) {
+            // On touch, the first tap on any node focuses it (highlight and camera, like hovering
+            // does) and opens its branch; a second tap on the same node goes there
+            this.hoverId = node.id;
+            if (node.id === 'writing') this.setArticlesOpen(true);
+            if (node.id === 'photos') this.setExpanded(true);
+            this.updateFocus();
         } else if (node.id === currentPageId) {
             // Clicking the Images node while on the Images page resets the view
             if (this.isPhotos) this.reset();
