@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calvin Walker - Images</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/2.0.0/modern-normalize.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="shared.css?v=2.3">
+    <link rel="stylesheet" href="shared.css?v=2.7">
     <style>
         /* Full screen layout overrides */
         body {
@@ -138,6 +138,9 @@
                fill the same space, so the swap doesn't make the photo jump in size */
             width: min(90vw, 1100px);
             height: 80vh;
+            /* On phones vh includes the area behind the browser's address bar, which crops the
+               photo; dvh tracks what's actually visible. Leave room for the caption too. */
+            height: min(80dvh, calc(100dvh - 9rem));
             object-fit: contain;
             display: block;
         }
@@ -153,7 +156,7 @@
         .modal-close {
             position: absolute;
             top: -30px;
-            right: -30px;
+            right: 0; /* was -30px, which put it off-screen on narrow phones */
             color: white;
             font-size: 1.5rem;
             cursor: pointer;
@@ -416,7 +419,7 @@
     </div>
 
     <script src="shared.js"></script>
-    <script src="graph.js?v=2.3"></script>
+    <script src="graph.js?v=2.7"></script>
     <script>
         // Photo modal functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -467,9 +470,22 @@
                 document.body.style.overflow = '';
             });
             
-            // Close modal when clicking outside the image
+            // The image element is a fixed box with the photo letterboxed inside it, so a click can
+            // land on the box without landing on the photo. Work out where the photo actually is.
+            function clickedOnPhoto(e) {
+                const box = modalImg.getBoundingClientRect();
+                const scale = Math.min(box.width / modalImg.naturalWidth, box.height / modalImg.naturalHeight);
+                const width = modalImg.naturalWidth * scale;
+                const height = modalImg.naturalHeight * scale;
+                const left = box.left + (box.width - width) / 2;
+                const top = box.top + (box.height - height) / 2;
+                return e.clientX >= left && e.clientX <= left + width &&
+                       e.clientY >= top && e.clientY <= top + height;
+            }
+
+            // Close modal when clicking outside the photo
             modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
+                if (e.target === modal || (e.target === modalImg && !clickedOnPhoto(e))) {
                     modal.style.display = 'none';
                     document.body.style.overflow = '';
                 }

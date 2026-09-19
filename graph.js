@@ -1,4 +1,4 @@
-// GraphNav version 2.2 - Headroom above the frame so top hover labels are not clipped
+// GraphNav version 2.7 - Year nodes highlight the way back to Images instead of themselves
 //
 // Photos are grouped into year nodes, listed by file name (without extension), newest year first.
 // (The code calls these groups "places"; they can be anything.) Add new photos to their year here.
@@ -127,7 +127,7 @@ class GraphNav {
         // Place/photo graph state
         this.isPhotos = false;
         this.placeNodes = [];
-        this.expanded = false;  // place nodes visible and frame grown (always true on the Images page)
+        this.expanded = false;  // year nodes visible and frame grown (opens on hovering Images)
         this.hoverId = null;    // place focused by mouse hover, or by the first tap on touch
         this.filterId = null;   // place focused by click/tap on the Images page; also filters the grid
         this.hideTimer = null;
@@ -157,16 +157,12 @@ class GraphNav {
         if (!main) return;
 
         const currentPageId = this.getCurrentPageId(window.location.pathname);
-        const currentArticle = this.articles.find(a => a.id === currentPageId);
 
-        // Article nodes stay visible on the Writing page and on the articles themselves;
-        // everywhere else they only appear while hovering the Writing node.
-        const alwaysOpen = currentPageId === 'writing' || !!currentArticle;
-
-        // On the Images page the place nodes are always out; elsewhere they open on demand
+        // The year nodes start tucked away on every page (including Images) and open when the
+        // Images node is hovered
         this.isPhotos = currentPageId === 'photos';
-        this.expanded = this.isPhotos;
-        this.frameH = this.frameHTarget = this.expanded ? FRAME_H_EXPANDED : FRAME_H_COLLAPSED;
+        this.expanded = false;
+        this.frameH = this.frameHTarget = FRAME_H_COLLAPSED;
         this.cam = { x: 200, y: this.frameH / 2 - HEADROOM, s: 1 };
         this.addPhotoNodes();
         this.nodeById = new Map(this.nodes.map(n => [n.id, n]));
@@ -176,7 +172,7 @@ class GraphNav {
         const graphNav = document.createElement('div');
         graphNav.className = 'graph-nav';
         graphNav.style.width = '100%';
-        graphNav.style.height = `${(this.isPhotos ? FRAME_H_EXPANDED : FRAME_H_COLLAPSED) - HEADROOM}px`;
+        graphNav.style.height = `${FRAME_H_COLLAPSED - HEADROOM}px`;
         graphNav.style.marginTop = '40px';
         graphNav.style.display = 'flex';
         graphNav.style.justifyContent = 'center';
@@ -202,11 +198,6 @@ class GraphNav {
                 edgeEl.classList.toggle('collapsed', !this.expanded);
             }
 
-            // Highlight edges connected to current page
-            if (currentPageId && (edge.from === currentPageId || edge.to === currentPageId)) {
-                edgeEl.classList.add('active');
-            }
-
             container.appendChild(edgeEl);
             this.edgeEls.push({ el: edgeEl, edge });
         });
@@ -230,11 +221,6 @@ class GraphNav {
                 url = '../' + node.url.replace('./', '');
             }
 
-            // Highlight current page
-            if (node.id === currentPageId) {
-                nodeEl.classList.add('active');
-            }
-
             nodeEl.addEventListener('click', () => this.onNodeClick(node, currentPageId, url));
 
             container.appendChild(nodeEl);
@@ -246,7 +232,7 @@ class GraphNav {
         // Append the graph at the end of the main content
         main.appendChild(graphNav);
 
-        this.setupReveal(alwaysOpen);
+        this.showArticles();
         this.setupPlaceInteractions(container);
         this.setupMotion();
         if (this.isPhotos) this.applyUrlState();
@@ -368,12 +354,13 @@ class GraphNav {
             } else {
                 window.location.href = this.photosUrl({ place: node.placeNode.place.id, photo: node.base });
             }
+        } else if (node.id === 'photos' && touch && !this.expanded) {
+            // First tap opens the year nodes; a second tap goes to the Images page (or, if
+            // already there, resets the view)
+            this.setExpanded(true);
         } else if (node.id === currentPageId) {
             // Clicking the Images node while on the Images page resets the view
-            if (this.isPhotos) this.clearFocus();
-        } else if (node.id === 'photos' && touch && !this.expanded) {
-            // First tap opens the places; a second tap goes to the Images page
-            this.setExpanded(true);
+            if (this.isPhotos) this.reset();
         } else {
             window.location.href = url;
         }
@@ -384,7 +371,10 @@ class GraphNav {
         const params = new URLSearchParams(window.location.search);
 
         const placeNode = this.placeNodes.find(p => p.place.id === params.get('place'));
-        if (placeNode) this.toggleFilter(placeNode);
+        if (placeNode) {
+            this.setExpanded(true);
+            this.toggleFilter(placeNode);
+        }
 
         const photo = params.get('photo');
         if (photo) {
@@ -396,32 +386,11 @@ class GraphNav {
         }
     }
 
-    // Fade article nodes in/out when hovering the Writing node or its children
-    setupReveal(alwaysOpen) {
-        const childNodeEls = this.nodes.filter(n => n.child).map(n => this.nodeEls.get(n.id));
-        const childEdgeEls = this.edgeEls.filter(e => e.edge.child).map(e => e.el);
-
-        const setRevealed = on => {
-            childNodeEls.forEach(el => el.classList.toggle('revealed', on));
-            childEdgeEls.forEach(el => el.classList.toggle('revealed', on));
-        };
-
-        setRevealed(alwaysOpen);
-        if (alwaysOpen) return;
-
-        let hideTimer;
-        const show = () => {
-            clearTimeout(hideTimer);
-            setRevealed(true);
-        };
-        const hide = () => {
-            hideTimer = setTimeout(() => setRevealed(false), 300);
-        };
-
-        [this.nodeEls.get('writing'), ...childNodeEls].forEach(el => {
-            el.addEventListener('mouseenter', show);
-            el.addEventListener('mouseleave', hide);
-        });
+    // Article nodes are shown on every page. When another node takes focus they fade back
+    // (like everything else outside its cluster) instead of disappearing.
+    showArticles() {
+        this.nodes.filter(n => n.child).forEach(n => this.nodeEls.get(n.id).classList.add('revealed'));
+        this.edgeEls.filter(e => e.edge.child).forEach(e => e.el.classList.add('revealed'));
     }
 
     // Mouse: hovering any node centers the camera on it and frames its neighbors, so you can walk
@@ -446,11 +415,8 @@ class GraphNav {
                 if (e.pointerType !== 'mouse') return;
                 clearTimeout(this.hideTimer);
 
-                // On other pages, hovering the Images node opens the year nodes
-                if (node.id === 'photos' && !this.isPhotos) this.setExpanded(true);
-
-                // A click-selected year (filter) only changes on click
-                if (this.filterId) return;
+                // Hovering the Images node opens the year nodes
+                if (node.id === 'photos') this.setExpanded(true);
 
                 if (node.id === this.hoverId) return;
 
@@ -473,7 +439,8 @@ class GraphNav {
             if (e.pointerType !== 'mouse') return;
             this.hideTimer = setTimeout(() => {
                 this.hoverId = null;
-                if (this.isPhotos) {
+                // Keep the years open while one is selected (its photos are filtering the grid)
+                if (this.filterId) {
                     this.updateFocus();
                 } else {
                     this.setExpanded(false);
@@ -491,8 +458,10 @@ class GraphNav {
         });
     }
 
+    // Hover wins so you can always move around; with nothing hovered the camera settles back on
+    // the click-selected year (if any)
     focusId() {
-        return this.filterId || this.hoverId;
+        return this.hoverId || this.filterId;
     }
 
     toggleFilter(placeNode) {
@@ -509,10 +478,10 @@ class GraphNav {
         this.updateFocus();
     }
 
-    // Zoom out and, on pages other than Images, close the places again
+    // Zoom out, clear any selected year and close the year nodes again
     reset() {
         this.clearFocus();
-        if (!this.isPhotos) this.setExpanded(false);
+        this.setExpanded(false);
     }
 
     // Show or hide the place nodes and grow or shrink the frame to fit them
@@ -623,6 +592,7 @@ class GraphNav {
         }
 
         const inCluster = new Set(focused ? this.clusterFor(focused).map(n => n.id) : []);
+        const highlighted = focused && focused.kind === 'place' ? this.nodeById.get('photos') : focused;
 
         this.nodes.forEach(node => {
             const el = this.nodeEls.get(node.id);
@@ -637,9 +607,18 @@ class GraphNav {
             }
             el.classList.toggle('dim', !!focused && !inCluster.has(node.id));
             el.classList.toggle('focused', node === focused);
+            // The highlight (color and size) follows the focused node, not the current page.
+            // Year nodes aren't highlighted themselves; they light up the way back to Images.
+            el.classList.toggle('active', node === highlighted);
         });
 
         this.edgeEls.forEach(({ el, edge }) => {
+            const lit = !focused ? false
+                : focused.kind === 'place'
+                    ? edge.from === 'photos' && edge.to === focused.id
+                    : edge.from === focused.id || edge.to === focused.id;
+            el.classList.toggle('active', lit);
+
             if (edge.photo) {
                 el.classList.toggle('revealed', !!focused && edge.from === focused.id);
                 return;
