@@ -319,6 +319,12 @@ h1 {
     pointer-events: auto;
 }
 
+/* The dark-mode `background` shorthand on .graph-node resets size/position, so restate them */
+[data-theme="dark"] .graph-node.photo {
+    background-size: cover;
+    background-position: center;
+}
+
 .graph-node.photo::before {
     display: none;
 }
