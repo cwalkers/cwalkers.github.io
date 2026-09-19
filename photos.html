@@ -134,14 +134,17 @@
         }
 
         .modal-content img {
-            max-width: 100%;
-            max-height: 80vh;
+            /* Fixed box: the thumbnail shown first and the sharp version that replaces it
+               fill the same space, so the swap doesn't make the photo jump in size */
+            width: min(90vw, 1100px);
+            height: 80vh;
+            object-fit: contain;
             display: block;
-            border: 1px solid var(--border-color);
         }
 
         .modal-caption {
-            margin-top: 1rem;
+            margin: 1rem auto 0;
+            text-align: center;
             color: white;
             font-size: 1rem;
             max-width: 600px;
@@ -422,13 +425,34 @@
             const modalCaption = modal.querySelector('.modal-caption');
             const closeBtn = modal.querySelector('.modal-close');
 
+            // The modal shows a web-sized copy (images/web/NAME.jpg), not the multi-MB original
+            function webUrl(item) {
+                const name = item.getAttribute('data-full').split('/').pop().replace(/\.[^.]+$/, '');
+                return 'images/web/' + name + '.jpg';
+            }
+
             // Open modal when clicking on a photo
             document.querySelectorAll('.photo-item').forEach(item => {
+                // Start loading the sharp version as soon as the cursor is over the photo
+                item.addEventListener('pointerenter', function() {
+                    new Image().src = webUrl(this);
+                }, { once: true });
+
                 item.addEventListener('click', function() {
-                    const fullSizeUrl = this.getAttribute('data-full');
+                    const sharpUrl = webUrl(this);
                     const caption = this.querySelector('.photo-caption').textContent;
-                    
-                    modalImg.src = fullSizeUrl;
+
+                    // Show the thumbnail (already loaded) straight away, then swap in the sharp
+                    // version once it has loaded. The check stops a slow load from replacing a
+                    // different photo that was opened in the meantime.
+                    modalImg.src = this.querySelector('img').getAttribute('src');
+                    modalImg.dataset.sharp = sharpUrl;
+                    const sharp = new Image();
+                    sharp.onload = function() {
+                        if (modalImg.dataset.sharp === sharpUrl) modalImg.src = sharpUrl;
+                    };
+                    sharp.src = sharpUrl;
+
                     modalCaption.textContent = caption;
                     modal.style.display = 'flex';
                     
