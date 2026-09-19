@@ -1,4 +1,4 @@
-// GraphNav version 2.8 - Article nodes open on hovering Writing (pinned on Writing and article pages)
+// GraphNav version 2.9 - Two-tap navigation on touch for Writing as well as Images
 //
 // Photos are grouped into year nodes, listed by file name (without extension), newest year first.
 // (The code calls these groups "places"; they can be anything.) Add new photos to their year here.
@@ -129,6 +129,7 @@ class GraphNav {
         this.placeNodes = [];
         this.expanded = false;  // year nodes visible and frame grown (opens on hovering Images)
         this.articlesPinned = false; // article nodes always visible (Writing page and articles)
+        this.articlesOpen = false;   // article nodes currently shown
         this.hoverId = null;    // place focused by mouse hover, or by the first tap on touch
         this.filterId = null;   // place focused by click/tap on the Images page; also filters the grid
         this.hideTimer = null;
@@ -359,6 +360,9 @@ class GraphNav {
             } else {
                 window.location.href = this.photosUrl({ place: node.placeNode.place.id, photo: node.base });
             }
+        } else if (node.id === 'writing' && touch && !this.articlesOpen) {
+            // First tap opens the article nodes; a second tap goes to the Writing page
+            this.setArticlesOpen(true);
         } else if (node.id === 'photos' && touch && !this.expanded) {
             // First tap opens the year nodes; a second tap goes to the Images page (or, if
             // already there, resets the view)
@@ -396,6 +400,7 @@ class GraphNav {
     // focus. On the Writing page and on the articles themselves they're always shown (pinned).
     setArticlesOpen(on) {
         if (!on && this.articlesPinned) return;
+        this.articlesOpen = on;
 
         this.nodes.filter(n => n.child).forEach(n => {
             this.nodeEls.get(n.id).classList.toggle('revealed', on);
